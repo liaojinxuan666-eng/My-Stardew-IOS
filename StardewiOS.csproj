@@ -10,9 +10,13 @@
     <ApplicationVersion>1.0</ApplicationVersion>
     <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
     <CheckEolTargetFramework>false</CheckEolTargetFramework>
+    
+    <!-- 核心排错配置：禁止剪裁 + 启用解释器 -->
+    <MtouchLink>None</MtouchLink>
+    <MtouchInterpreter>-all</MtouchInterpreter>
   </PropertyGroup>
   <ItemGroup>
-    <!-- 引入现代 MonoGame iOS 库 -->
-    <PackageReference Include="MonoGame.Framework.iOS" Version="3.8.*" />
+    <!-- 锁定稳定版 MonoGame -->
+    <PackageReference Include="MonoGame.Framework.iOS" Version="3.8.1.303" />
   </ItemGroup>
 </Project>

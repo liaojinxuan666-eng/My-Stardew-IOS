@@ -1,5 +1,7 @@
 using Foundation;
 using UIKit;
+using System;
+using System.IO;
 
 namespace StardewiOS
 {
@@ -10,8 +12,18 @@ namespace StardewiOS
 
         public override bool FinishedLaunching(UIApplication application, NSDictionary launchOptions)
         {
-            _game = new Game1();
-            _game.Run(); // 启动 MonoGame 主循环
+            try
+            {
+                _game = new Game1();
+                _game.Run();
+            }
+            catch (Exception ex)
+            {
+                // 崩溃时把错误写到手机文件App的Documents目录下
+                string logPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "crash.log");
+                File.WriteAllText(logPath, ex.ToString());
+                Console.WriteLine("崩溃: " + ex.ToString());
+            }
             return true;
         }
     }
