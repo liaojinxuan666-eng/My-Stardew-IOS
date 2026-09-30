@@ -1,24 +1,48 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input.Touch; // 引入触摸检测库
+using Microsoft.Xna.Framework.Input.Touch;
 using System;
 
 namespace StardewiOS
 {
+    // 👇 模拟星露谷的"地图"类（GameLocation）
+    public class SimpleLocation
+    {
+        public Rectangle Bounds;
+        public SimpleLocation(Rectangle bounds) { Bounds = bounds; }
+    }
+
+    // 👇 模拟星露谷的"玩家"类（Farmer）
+    public class SimpleFarmer
+    {
+        public Vector2 Position;
+        public int Speed = 4;
+        
+        public void Move(Vector2 direction)
+        {
+            Position += direction * Speed;
+            // 限制玩家不要跑出地图边界
+            Position.X = Math.Clamp(Position.X, 0, 1000 - 64);
+            Position.Y = Math.Clamp(Position.Y, 0, 1000 - 64);
+        }
+    }
+
     public class Game1 : Game
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        // 👇 我们代替玩家的方块位置
-        private Vector2 playerPosition;
-        
-        // 👇 复制自星露谷原版 Game1.cs 的时间变量
-        public static int timeOfDay = 600; // 游戏时间，从早上 6:00 开始
-        public static int dayOfMonth = 1;  // 当前天数
-        public static int season = 0;      // 季节：0=春, 1=夏, 2=秋, 3=冬
-        public static int year = 1;        // 年份
-        private int updateTick = 0;        // 时间流逝计时器
+        // 👇 核心：游戏状态
+        public static int gameMode = 0; // 0 = 标题画面, 3 = 正常游戏
+        private SimpleLocation currentLocation;
+        private SimpleFarmer player;
+
+        // 时间变量
+        public static int timeOfDay = 600;
+        public static int dayOfMonth = 1;
+        public static int season = 0;
+        public static int year = 1;
+        private int updateTick = 0;
 
         public Game1()
         {
@@ -27,11 +51,9 @@ namespace StardewiOS
 
         protected override void Initialize()
         {
-            // 把方块初始化在屏幕正中间
-            playerPosition = new Vector2(
-                GraphicsDevice.Viewport.Width / 2,
-                GraphicsDevice.Viewport.Height / 2);
-
+            // 初始化地图和玩家
+            currentLocation = new SimpleLocation(new Rectangle(0, 0, 1000, 1000));
+            player = new SimpleFarmer { Position = new Vector2(500, 500) };
             base.Initialize();
         }
 
@@ -42,37 +64,46 @@ namespace StardewiOS
 
         protected override void Update(GameTime gameTime)
         {
-            // 👇 1. 处理触摸输入（模拟玩家移动）
             TouchCollection touches = TouchPanel.GetState();
-            if (touches.Count > 0)
-            {
-                // 获取第一个触摸点（手指）的位置
-                // 减去 64 是因为方块宽高是 128，我们想让手指在方块正中心
-                playerPosition.X = touches[0].Position.X - 64;
-                playerPosition.Y = touches[0].Position.Y - 64;
-            }
 
-            // 👇 2. 处理星露谷时间流逝
-            updateTick++;
-            if (updateTick >= 60) // 每 60 帧算 10 分钟
+            if (gameMode == 0)
             {
-                updateTick = 0;
-                timeOfDay += 10;
-
-                // 超过凌晨 2:00 (2600)，进入新的一天
-                if (timeOfDay >= 2600)
+                // 标题画面：点一下屏幕就进入游戏
+                if (touches.Count > 0 && touches[0].State == TouchLocationState.Pressed)
                 {
-                    timeOfDay = 600; // 重置到早上 6:00
-                    dayOfMonth++;
-                    
-                    if (dayOfMonth > 28) // 星露谷每月 28 天
+                    gameMode = 3;
+                    Console.WriteLine("进入游戏世界！");
+                }
+            }
+            else if (gameMode == 3)
+            {
+                // 正常游戏：根据触摸位置控制玩家移动
+                if (touches.Count > 0)
+                {
+                    Vector2 target = new Vector2(touches[0].Position.X, touches[0].Position.Y);
+                    Vector2 direction = target - player.Position;
+                    if (direction.Length() > 10) // 防止抖动
                     {
-                        dayOfMonth = 1;
-                        season++;
-                        if (season > 3) // 四季轮回
+                        direction.Normalize();
+                        player.Move(direction);
+                    }
+                }
+
+                // 时间流逝逻辑（沿用之前代码）
+                updateTick++;
+                if (updateTick >= 60)
+                {
+                    updateTick = 0;
+                    timeOfDay += 10;
+                    if (timeOfDay >= 2600)
+                    {
+                        timeOfDay = 600;
+                        dayOfMonth++;
+                        if (dayOfMonth > 28)
                         {
-                            season = 0;
-                            year++;
+                            dayOfMonth = 1;
+                            season++;
+                            if (season > 3) { season = 0; year++; }
                         }
                     }
                 }
@@ -83,28 +114,35 @@ namespace StardewiOS
 
         protected override void Draw(GameTime gameTime)
         {
-            // 👇 根据游戏时间改变背景色（模拟日夜交替）
-            if (timeOfDay < 1800) // 6:00 - 18:00 白天
-                GraphicsDevice.Clear(Color.CornflowerBlue);
-            else if (timeOfDay < 2000) // 18:00 - 20:00 傍晚
-                GraphicsDevice.Clear(Color.Orange);
-            else // 20:00 以后 夜晚
-                GraphicsDevice.Clear(Color.DarkBlue);
+            GraphicsDevice.Clear(Color.CornflowerBlue);
 
             spriteBatch.Begin();
-            
-            // 创建一个白色的纯色纹理来代表我们的"玩家"
-            Texture2D playerBox = new Texture2D(GraphicsDevice, 1, 1);
-            playerBox.SetData(new[] { Color.White });
 
-            // 在触摸位置绘制这个方块
-            spriteBatch.Draw(playerBox, new Rectangle(
-                (int)playerPosition.X,
-                (int)playerPosition.Y,
-                128, 128), Color.White);
-            
+            // 创建一个纯色纹理用来画方块
+            Texture2D box = new Texture2D(GraphicsDevice, 1, 1);
+            box.SetData(new[] { Color.White });
+
+            if (gameMode == 0)
+            {
+                // 画一个白色的"开始按钮"
+                spriteBatch.Draw(box, new Rectangle(
+                    (GraphicsDevice.Viewport.Width / 2) - 100,
+                    (GraphicsDevice.Viewport.Height / 2) - 50,
+                    200, 100), Color.Green); // 绿色按钮
+            }
+            else if (gameMode == 3)
+            {
+                // 画地图（深绿色背景块代表草地）
+                spriteBatch.Draw(box, new Rectangle(0, 0, 1000, 1000), Color.DarkGreen);
+
+                // 画玩家（白色方块）
+                spriteBatch.Draw(box, new Rectangle(
+                    (int)player.Position.X,
+                    (int)player.Position.Y,
+                    64, 64), Color.White);
+            }
+
             spriteBatch.End();
-
             base.Draw(gameTime);
         }
     }
