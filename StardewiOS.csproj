@@ -9,6 +9,7 @@
     <ApplicationTitle>StardewiOS</ApplicationTitle>
     <ApplicationVersion>1.0</ApplicationVersion>
     <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+    <CheckEolTargetFramework>false</CheckEolTargetFramework>
   </PropertyGroup>
   <ItemGroup>
     <!-- 引入现代 MonoGame iOS 库 -->
