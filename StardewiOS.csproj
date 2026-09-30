@@ -11,9 +11,9 @@
     <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
     <CheckEolTargetFramework>false</CheckEolTargetFramework>
 
-    <!-- 核心排错配置：改为按需解释和裁剪 -->
-    <MtouchLink>SdkOnly</MtouchLink> <!-- 只裁剪系统库，保留 MonoGame -->
-    <MtouchInterpreter>MonoGame.Framework.iOS</MtouchInterpreter> <!-- 只让 MonoGame 走解释器 -->
+    <!-- 核心排错配置：按需解释和裁剪 -->
+    <MtouchLink>SdkOnly</MtouchLink>
+    <MtouchInterpreter>MonoGame.Framework.iOS</MtouchInterpreter>
   </PropertyGroup>
 
   <ItemGroup>
@@ -21,9 +21,9 @@
     <PackageReference Include="MonoGame.Framework.iOS" Version="3.8.1.303" />
   </ItemGroup>
 
-  <!-- 新增：确保 Content 文件夹内的所有资源（如图片）都被打包进 App -->
-  <!-- 修改后的这两行，更稳妥 -->
+  <!-- 确保 Content 文件夹内的所有资源（如图片）都被打包进 App -->
   <ItemGroup>
     <BundleResource Include="Content/**/*.*" />
     <None Update="Content/**/*.*" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
+</Project>
