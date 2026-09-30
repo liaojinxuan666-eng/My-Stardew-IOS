@@ -10,13 +10,19 @@
     <ApplicationVersion>1.0</ApplicationVersion>
     <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
     <CheckEolTargetFramework>false</CheckEolTargetFramework>
-    
+
     <!-- 核心排错配置：禁止剪裁 + 启用解释器 -->
     <MtouchLink>None</MtouchLink>
     <MtouchInterpreter>-all</MtouchInterpreter>
   </PropertyGroup>
+
   <ItemGroup>
     <!-- 锁定稳定版 MonoGame -->
     <PackageReference Include="MonoGame.Framework.iOS" Version="3.8.1.303" />
+  </ItemGroup>
+
+  <!-- 新增：确保 Content 文件夹内的所有资源（如图片）都被打包进 App -->
+  <ItemGroup>
+    <BundleResource Include="Content\**\*.*" />
   </ItemGroup>
 </Project>
