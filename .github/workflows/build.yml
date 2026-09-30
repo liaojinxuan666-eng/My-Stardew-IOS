@@ -1,7 +1,7 @@
 name: Build iOS IPA
 on:
   push:
-    branches: [ main ]
+    branches: [ master, main ]
   workflow_dispatch:
 
 jobs:
@@ -15,18 +15,17 @@ jobs:
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.0.x' # 使用 .NET 8
+          dotnet-version: '8.0.x'
 
-      - name: Install workloads
+      - name: Install iOS workload
         run: dotnet workload install ios
 
       - name: Restore dependencies
-        run: dotnet restore StardewiOS/StardewiOS.csproj
+        run: dotnet restore TemplateiOS/TemplateiOS.csproj
 
-      # 核心编译步骤：强制不签名，生成 ipa
       - name: Build and Publish
         run: |
-          dotnet publish StardewiOS/StardewiOS.csproj \
+          dotnet publish TemplateiOS/TemplateiOS.csproj \
             -f net8.0-ios \
             -c Release \
             -p:RuntimeIdentifier=ios-arm64 \
@@ -39,5 +38,5 @@ jobs:
       - name: Upload IPA
         uses: actions/upload-artifact@v4
         with:
-          name: StardewiOS-Unsigned-IPA
-          path: StardewiOS/bin/Release/net8.0-ios/ios-arm64/publish/*.ipa
+          name: TemplateiOS-Unsigned-IPA
+          path: TemplateiOS/bin/Release/net8.0-ios/ios-arm64/publish/*.ipa
