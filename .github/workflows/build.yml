@@ -39,4 +39,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: TemplateiOS-Unsigned-IPA
-          path: TemplateiOS/bin/Release/net8.0-ios/ios-arm64/publish/*.ipa
+          path: "MonoGame test/TemplateiOS/bin/Release/net8.0-ios/ios-arm64/publish/*.ipa"
