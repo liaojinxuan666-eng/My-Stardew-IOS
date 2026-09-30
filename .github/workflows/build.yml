@@ -32,6 +32,8 @@ jobs:
             -p:RuntimeIdentifier=ios-arm64 \
             -p:ArchiveOnBuild=true \
             -p:BuildIpa=true \
+            -p:CheckEolTargetFramework=false \
+            -p:EnableCodeSigning=false \
             -p:CodesignKey="" \
             -p:CodesignProvision="" \
             -p:CodesignRequireProvisioningProfile=false
