@@ -11,10 +11,13 @@ namespace StardewiOS
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
-            Content.RootDirectory = "Content";
+            // Content.RootDirectory = "Content"; // 暂时注释掉，避免没有 Content 文件夹导致启动崩溃
         }
 
-        protected override void Initialize() { base.Initialize(); }
+        protected override void Initialize()
+        {
+            base.Initialize();
+        }
 
         protected override void LoadContent()
         {
@@ -28,7 +31,9 @@ namespace StardewiOS
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue); // 纯蓝色背景，验证运行成功
+            // 清屏为蓝色，用于验证 MonoGame 渲染循环是否正常工作
+            GraphicsDevice.Clear(Color.CornflowerBlue);
+            
             base.Draw(gameTime);
         }
     }
