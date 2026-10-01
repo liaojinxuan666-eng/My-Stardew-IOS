@@ -11,11 +11,8 @@ namespace StardewiOS
         SpriteBatch spriteBatch;
 
         public static int gameMode = 0; // 0 = 标题画面, 3 = 正常游戏
-        
-        // 👇 用我们新创建的类替换之前的 Simple 类
         private GameLocation currentLocation;
-        private Farmer player; 
-
+        private Farmer player;
         private int updateTick = 0;
 
         public Game1()
@@ -25,10 +22,8 @@ namespace StardewiOS
 
         protected override void Initialize()
         {
-            // 实例化地图和玩家
             currentLocation = new GameLocation("Farm", new Rectangle(0, 0, 1000, 1000));
             player = new Farmer { Position = new Vector2(500, 500) };
-            
             base.Initialize();
         }
 
@@ -45,7 +40,7 @@ namespace StardewiOS
             {
                 if (touches.Count > 0 && touches[0].State == TouchLocationState.Pressed)
                 {
-                    gameMode = 3; // 点击屏幕进入游戏
+                    gameMode = 3;
                 }
             }
             else if (gameMode == 3)
@@ -57,7 +52,8 @@ namespace StardewiOS
                     if (direction.Length() > 10)
                     {
                         direction.Normalize();
-                        player.Move(direction); // 使用 Farmer 类的方法
+                        // 把地图传进去，让玩家自己处理碰撞
+                        player.Move(direction, currentLocation);
                     }
                 }
 
@@ -67,14 +63,11 @@ namespace StardewiOS
                 {
                     updateTick = 0;
                     timeOfDay += 10;
-                    // ... 时间逻辑可以后续再扩展
                 }
             }
-
             base.Update(gameTime);
         }
 
-        // 把时间变量放到 Game1 类里（和原版一样）
         public static int timeOfDay = 600;
         public static int dayOfMonth = 1;
         public static int season = 0;
@@ -90,22 +83,21 @@ namespace StardewiOS
 
             if (gameMode == 0)
             {
-                // 绿色标题按钮
-                spriteBatch.Draw(box, new Rectangle(
-                    (GraphicsDevice.Viewport.Width / 2) - 100,
-                    (GraphicsDevice.Viewport.Height / 2) - 50,
-                    200, 100), Color.Green);
+                spriteBatch.Draw(box, new Rectangle((GraphicsDevice.Viewport.Width / 2) - 100, (GraphicsDevice.Viewport.Height / 2) - 50, 200, 100), Color.Green);
             }
             else if (gameMode == 3)
             {
-                // 画地图边界（深绿色）
+                // 1. 画地图背景（深绿色）
                 spriteBatch.Draw(box, currentLocation.Bounds, Color.DarkGreen);
 
-                // 画玩家（白色方块）
-                spriteBatch.Draw(box, new Rectangle(
-                    (int)player.Position.X,
-                    (int)player.Position.Y,
-                    64, 64), Color.White);
+                // 2. 画障碍物（灰色）
+                foreach (var obs in currentLocation.Obstacles)
+                {
+                    spriteBatch.Draw(box, obs, Color.Gray);
+                }
+
+                // 3. 画玩家（白色方块）
+                spriteBatch.Draw(box, new Rectangle((int)player.Position.X, (int)player.Position.Y, 64, 64), Color.White);
             }
 
             spriteBatch.End();
