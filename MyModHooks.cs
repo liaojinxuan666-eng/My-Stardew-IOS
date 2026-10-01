@@ -2,7 +2,7 @@ using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-// 👇 手动造的官方接口空壳，避免编译找不到类型
+// 👇 手动造的官方接口空壳
 namespace StardewValley.Mods
 {
     public class ModHooks
@@ -20,7 +20,7 @@ namespace StardewValley.Mods
     }
 }
 
-// 👇 我们自己的 Mod Hook 实现
+// 👇 我们自己的 Hook 实现（负责接收游戏事件并转交Mod）
 namespace StardewiOS
 {
     using StardewValley.Mods;

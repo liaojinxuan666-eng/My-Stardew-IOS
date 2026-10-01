@@ -25,7 +25,6 @@ namespace StardewiOS
             {
                 try
                 {
-                    // 核心：动态加载 DLL，验证 iOS 是否允许
                     Assembly asm = Assembly.LoadFrom(dll);
                     Console.WriteLine("成功加载 Mod: " + asm.FullName);
                 }

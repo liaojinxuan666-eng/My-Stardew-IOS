@@ -11,7 +11,7 @@
     <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
     <CheckEolTargetFramework>false</CheckEolTargetFramework>
 
-    <!-- 核心配置：开启文件共享，让"文件"App能看见沙盒 -->
+    <!-- 核心配置：开启文件共享，让"文件"App能看见沙盒，这样才能往里塞 Mod -->
     <UIFileSharingEnabled>true</UIFileSharingEnabled>
     <LSSupportsOpeningDocumentsInPlace>true</LSSupportsOpeningDocumentsInPlace>
 

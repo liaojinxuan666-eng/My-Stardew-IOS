@@ -28,7 +28,7 @@ namespace StardewiOS
             currentLocation = new GameLocation("Farm", new Rectangle(0, 0, 1000, 1000));
             player = new Farmer { Position = new Vector2(500, 500) };
             
-            // 👇 启动时扫描 Documents/Mods 文件夹
+            // 👇 启动时扫描 Documents/Mods 文件夹（为未来的Mod做准备）
             ModLoader.LoadAllMods();
             
             base.Initialize();
@@ -36,7 +36,25 @@ namespace StardewiOS
 
         protected override void LoadContent()
         {
-            spriteBatch = new SpriteBatch(GraphicsDevice);
+            try
+            {
+                // ====================================================================
+                // 👇👇👇 【移植区】在这里粘贴 Mac 版 Game1.cs 中 LoadContent 的代码 👇👇👇
+                // ====================================================================
+                // 建议第一步：只复制下面这种简单的初始化代码，把带有 Steam、GOG、System.Windows.Forms 的行全部注释掉
+                // 例如：
+                // spriteBatch = new SpriteBatch(base.GraphicsDevice);
+                // content = CreateContentManager(base.Content.ServiceProvider, base.Content.RootDirectory);
+                // ====================================================================
+
+                // 我们当前的基础渲染（暂时保留，等你的原版代码跑通再删）
+                spriteBatch = new SpriteBatch(base.GraphicsDevice);
+                
+            }
+            catch (System.Exception ex)
+            {
+                Console.WriteLine("【移植报错】LoadContent 失败: " + ex.Message);
+            }
         }
 
         protected override void Update(GameTime gameTime)
