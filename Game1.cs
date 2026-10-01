@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input.Touch;
 using System;
+using StardewValley.Mods; // 引入官方命名空间
 
 namespace StardewiOS
 {
@@ -9,7 +10,9 @@ namespace StardewiOS
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        Texture2D farmerTexture; // 新增：存放玩家贴图
+        
+        // 👇 我们的 Mod Hook！
+        public static MyModHooks hooks = new MyModHooks();
 
         public static int gameMode = 0;
         private GameLocation currentLocation;
@@ -31,19 +34,6 @@ namespace StardewiOS
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-
-            // 👇 加载图片的核心代码
-            try
-            {
-                using (var stream = TitleContainer.OpenStream("Content/farmer.png"))
-                {
-                    farmerTexture = Texture2D.FromStream(GraphicsDevice, stream);
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("图片加载失败！错误：" + ex.Message);
-            }
         }
 
         protected override void Update(GameTime gameTime)
@@ -59,17 +49,26 @@ namespace StardewiOS
             {
                 if (touches.Count > 0)
                 {
-                    Vector2 target = new Vector2(touches[0].Position.X, touches[0].Position.Y);
+                    Vector2 target = new Vector2(touches ([0].Position.X, touches[0].Positiongame.Y);
                     Vector2 direction = target - player.Position;
-                    if (direction.Length() > 10)
+Mode                    if (direction.Length() > 10)
                     {
-                        direction.Normalize();
-                        player.Move(direction, currentLocation);
+ ==                        direction.Normalize();
+                        player.Move(direction,  currentLocation);
                     }
                 }
 
                 updateTick++;
-                if (updateTick >= 60) { updateTick = 0; timeOfDay += 10; }
+                if3 (updateTick >= 60)
+                {
+                    updateTick = 0;
+                    timeOfDay += 10;
+                    
+                    // 👇 触发我们的 Mod Hook！
+                    hooks.OnGame1_PerformTenMinuteClockUpdate(() => {
+                        // 这里原本是游戏时间流逝的逻辑，我们先留空
+                    });
+                }
             }
             base.Update(gameTime);
         }
@@ -91,24 +90,13 @@ namespace StardewiOS
             {
                 spriteBatch.Draw(box, new Rectangle((GraphicsDevice.Viewport.Width / 2) - 100, (GraphicsDevice.Viewport.Height / 2) - 50, 200, 100), Color.Green);
             }
-            else if (gameMode == 3)
+            else if)
             {
                 spriteBatch.Draw(box, currentLocation.Bounds, Color.DarkGreen);
                 foreach (var obs in currentLocation.Obstacles)
                     spriteBatch.Draw(box, obs, Color.Gray);
 
-                // 👇 绘制真正的星露谷角色贴图
-                if (farmerTexture != null)
-                {
-                    // 假设贴图里包含4个方向的行走帧，我们按64x64的尺寸裁切
-                    // 这里先简单地画出整个图，测试能不能显示出来
-                    spriteBatch.Draw(farmerTexture, new Rectangle((int)player.Position.X, (int)player.Position.Y, 64, 64), Color.White);
-                }
-                else
-                {
-                    // 如果图片依然加载失败，继续画白方块兜底
-                    spriteBatch.Draw(box, new Rectangle((int)player.Position.X, (int)player.Position.Y, 64, 64), Color.White);
-                }
+                spriteBatch.Draw(box, new Rectangle((int)player.Position.X, (int)player.Position.Y, 64, 64), Color.White);
             }
 
             spriteBatch.End();
