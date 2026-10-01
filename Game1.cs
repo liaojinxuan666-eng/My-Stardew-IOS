@@ -28,7 +28,7 @@ namespace StardewiOS
             currentLocation = new GameLocation("Farm", new Rectangle(0, 0, 1000, 1000));
             player = new Farmer { Position = new Vector2(500, 500) };
             
-            // 👇 核心：启动时扫描 Documents/Mods 文件夹
+            // 👇 启动时扫描 Documents/Mods 文件夹
             ModLoader.LoadAllMods();
             
             base.Initialize();
@@ -68,8 +68,6 @@ namespace StardewiOS
                 {
                     updateTick = 0;
                     timeOfDay += 10;
-                    
-                    // 触发 Mod 钩子
                     hooks.OnGame1_PerformTenMinuteClockUpdate(() => { });
                 }
             }

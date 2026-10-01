@@ -8,7 +8,6 @@ namespace StardewiOS
     {
         public static void LoadAllMods()
         {
-            // 获取 iOS 沙盒的 Documents 目录
             string docs = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             string modsDir = Path.Combine(docs, "Mods");
 
@@ -26,11 +25,9 @@ namespace StardewiOS
             {
                 try
                 {
-                    // 👇 核心！动态加载外部 DLL！
+                    // 核心：动态加载 DLL，验证 iOS 是否允许
                     Assembly asm = Assembly.LoadFrom(dll);
                     Console.WriteLine("成功加载 Mod: " + asm.FullName);
-
-                    // 这里我们暂时不执行它，先证明能加载进去
                 }
                 catch (Exception ex)
                 {
